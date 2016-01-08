@@ -1,0 +1,4 @@
+g++ real.cpp circle.cpp color.cpp -o test
+test config.txt
+mogrify -format jpeg *.bmp
+convert -delay 4 -loop 0 *.jpeg -scale 512x512 animation.mp4
