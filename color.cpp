@@ -1,6 +1,7 @@
 #include "color.h"
 
 		Color::Color() {
+			//3 values that set color of pixel 
 			r = 0;
 			g = 0;
 			b = 0;
