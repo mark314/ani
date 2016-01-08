@@ -111,6 +111,7 @@ void write_bmp_header_file(ofstream& output_file, int px, int pz)
 }
 int main(int argc, char * argv[])
 {
+    //declare vars
     ifstream config_data;
     string arg = argv[1];
     config_data.open(arg.c_str());
@@ -206,7 +207,7 @@ int main(int argc, char * argv[])
     p_buffer[1]=0;
     p_buffer[2]=0;
     p_buffer[3]=0;
-
+    //begin generating fixed background
     for(int i=0;i<pz;i++)
     {
        for(int j=0;j<3*px;j=j+3)
@@ -216,10 +217,12 @@ int main(int argc, char * argv[])
            buffer[i][j+2]=0;
        }
     }
+    //start generating stars using random ints
     //cout<<buffer[0][0]<<endl;
     srand(random_number_seed);
     for (int k =0; k<number_of_stars; k++)
     {
+        //each star has a random center, color, and intensity
         int star_x_coord = rand() % (image_width + 1);
         int star_y_coord = rand() % (image_height + 1);
         //cout<<star_x_coord<<" "<<star_y_coord<<endl;
@@ -233,6 +236,7 @@ int main(int argc, char * argv[])
         //double star_radius = (rand() % (max_star_radius*100- min_star_radius*100 + 1))+ min
         double star_radius = ( (rand() % (static_cast<int>(max_star_radius * 100) - static_cast<int>(min_star_radius * 100) + 1)) + static_cast<int>(min_star_radius * 100) ) / 100.0;
         //cout<<star_radius<<endl;
+        //if a pixel in the file is within the radius of a star, give it the star's color
         for (int i = 0; i<image_height; i++)
         {
             for (int j = 0; j<3*image_width; j+= 3)
@@ -248,8 +252,10 @@ int main(int argc, char * argv[])
     }
 
     //cout<<endl<<sun_color_red<<endl<<sun_color_green<<endl<<sun_color_blue<<endl;
+    //create the sun Circle object
     Color sun_color(sun_color_red,sun_color_green, sun_color_blue);
     Circle sun(sun_x_coordinate,sun_y_coordinate, sun_radius, sun_color);
+    //if a pixel in the file is within the radius of the sun, give it the sun's color
     for (int i = 0; i<image_height; i++)
         {
             for (int j = 0; j<3*image_width; j+= 3)
@@ -301,10 +307,11 @@ int main(int argc, char * argv[])
     //moon.setYPos(earth.getYPos());
     moon.setRadius(moon_color_radius);
     moon.setColor(moon_color);
-
+    //we have completed our background, which will remain constant all throughout the program.
     cout<<"Created background"<<endl;
 
     double total_frames = number_of_frames_per_second*total_seconds;
+    //create new image for each frame, writing over a copy of the background we have created
     for(int f = 0; f<total_frames; f += delta_frames)
     {
         
@@ -325,6 +332,7 @@ int main(int argc, char * argv[])
 
         string num = int_to_string(f) + ".bmp";
         ostrm.open(num.c_str(), ios::out | ios::binary);
+        //error handle
         if(ostrm.fail())
         {
             cout << "Error.  Can't open output file " << f << "." << endl;
@@ -357,14 +365,14 @@ int main(int argc, char * argv[])
         }
         write_bmp_header_file(ostrm, image_width, image_height);
 
-        //if (f<360)
-        //{
+        //create Earth object
+        //rotate the Earth about the sun's center, changing it's center's position in every frame
         int earthx = sun_x_coordinate + planet_distance_from_sun*cos(planet_cycles_per_total_seconds*2*PI*(f/total_frames));
         int earthy = sun_y_coordinate + planet_distance_from_sun*sin(planet_cycles_per_total_seconds*2*PI*(f/total_frames));
         earth.setXPos(earthx);
         earth.setYPos(earthy);
         //cout<<earthx<<" "<<cos(planet_cycles_per_total_seconds*2*PI*(f/total_frames))<<" "<<earthy<<" "<<sin(planet_cycles_per_total_seconds*2*PI*(f/total_frames))<<" "<< planet_cycles_per_total_seconds<<" "<<f/total_frames<< endl;
-
+        //if a pixel in the file is within the radius of the Earth, give it the Earth's color
         for (int i = 0; i<image_height; i++)
             {
                 for (int j = 0; j<3*image_width; j+= 3)
@@ -377,9 +385,11 @@ int main(int argc, char * argv[])
                     }
                 }
             }
-
+        //create Moon object
+        //rotate the Moon about the earth's center, changing it's center's position in every frame
         moon.setXPos(earth.getXPos() + moon_distance_from_earth*cos(moon_cycles_per_total_seconds*2*PI*(f/total_frames)));
         moon.setYPos(earth.getYPos() + moon_distance_from_earth*sin(moon_cycles_per_total_seconds*2*PI*(f/total_frames)));
+        //if a pixel in the file is within the radius of the Moon, give it the Moon's color
 
         for (int i = 0; i<image_height; i++)
             {
