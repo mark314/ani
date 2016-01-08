@@ -3,12 +3,14 @@
 #include "circle.h"
 
 		Circle::Circle(){
+			//coordinates of circle center
 			xPos = 0;
 			yPos = 0;
 			radius = 0;
 			Color circleColor();
 		};
 		Circle::Circle(double xPosInput, double yPosInput, double radiusInput, Color circleColorInput){
+			//coordinates of circle center
 			xPos = xPosInput;
 			yPos = yPosInput;
 			radius = radiusInput;
@@ -33,6 +35,7 @@
 			yPos = yPosInput;
 		};
 		void Circle::setColor(Color circleColorInput) { 
+			//color of circle
 			circleColor.setR(circleColorInput.getR());
 			circleColor.setG(circleColorInput.getG());
 			circleColor.setB(circleColorInput.getB());
@@ -41,6 +44,7 @@
 			radius = radiusInput;
 		};
 		void Circle::translate(double dx, double dy) { 
+			//move cirlce center
 			xPos += dx;
 			yPos += dy;
 		};
